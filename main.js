@@ -3,6 +3,7 @@ var Drone = function(options) {
   this.address = (options ? options.address : undefined);
   this.connected = false;
   this.steps = {};
+  this.characteristics = [];
 };
 
 
@@ -24,15 +25,18 @@ function stopDiscovery() {
 }
 
 Drone.prototype.bleConnect = function (device, callback) {
+  var that = this;
   chrome.bluetoothLowEnergy.connect(device.address, function () {
     if (chrome.runtime.lastError) {
       console.log('Failed to connect: ' + chrome.runtime.lastError.message);
-      callback(chrome.runtime.lastError);
+      if (callback)
+        callback(chrome.runtime.lastError);
     } else {
       console.log('Connected to rolling spider');
-      this.peripheral = device;
-      this.connected = true;
-      callback();
+      that.peripheral = device;
+      that.connected = true;
+      if (callback)
+        callback(null, that);
     }
   });
 };
@@ -58,6 +62,8 @@ Drone.prototype.connect = function(callback) {
   chrome.bluetooth.startDiscovery(function () {
     searchTimer = setTimeout(function () {
       stopDiscovery();
+      if (callback)
+        callback(new Error('No Rolling Spider was found.'));
     }, 30000);
   });
 };
@@ -66,15 +72,15 @@ Drone.prototype.connect = function(callback) {
 
 Drone.prototype.setup = function(callback) {
   var that = this;
-  chrome.bluetoothLowEnergy.getServices(this.peripheral.address, function (services) {
+  chrome.bluetoothLowEnergy.getServices(that.peripheral.address, function (services) {
     that.services = services;
     console.log('Services', services);
-    chrome.bluetoothLowEnergy.getCharacteristics(this.peripheral.address, function (characteristics) {
-      that.characteristics = characteristics;
-    console.log('Characteristics', characteristics);
-      console.log('handshake');
-      that.handshake(callback);
-    })
+    services.forEach(function(service) {
+      chrome.bluetoothLowEnergy.getCharacteristics(service.instanceId, function (characteristics) {
+        console.log(characteristics);
+        that.characteristics = characteristics;
+      });
+    });
   });
 };
 
@@ -100,7 +106,8 @@ Drone.prototype.handshake = function(callback) {
         true,
         function(error) {
           setTimeout(function() {
-            callback();
+            if (callback)
+              callback();
           }, 100);
         }
         );
@@ -141,6 +148,12 @@ window.onload = function() {
 
 
   var drone = new Drone();
-  drone.connect();
+  drone.connect(function (error) {
+    if (error) {
+      console.error(error);
+    } else {
+      drone.setup();
+    }
+  });
 
 };

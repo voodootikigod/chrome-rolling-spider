@@ -11,7 +11,7 @@ function buffer(array) {
 }
 
 function log() {
-  logNode = (logNode || document.querySelector('#log'));
+  logNode = ((typeof logNode !== 'undefined') ? logNode : document.querySelector('#log'));
   var args = [];
   for (var i = 0;i<arguments.length; i++) {
     var item = arguments[i];

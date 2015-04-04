@@ -208,65 +208,65 @@ function takeOff() {
   this.steps[DRIVE_KEY] = (this.steps[DRIVE_KEY] || 0) + 1;
   this.writeTo(
       DRIVE_KEY,
-      new Buffer([0x02,this.steps[DRIVE_KEY] & 0xFF,0x02,0x00,0x01,0x00])
+      buffer([0x02,this.steps[DRIVE_KEY] & 0xFF,0x02,0x00,0x01,0x00])
       );
-};
+}
 
 function land(){
-  this.steps['fa0b'] = (this.steps['fa0b'] || 0) + 1;
+  this.steps[DRIVE_KEY] = (this.steps[DRIVE_KEY] || 0) + 1;
   this.writeTo(
-      'fa0b',
-      new Buffer([0x02,this.steps['fa0b'] & 0xFF,0x02,0x00,0x03,0x00])
+      DRIVE_KEY,
+      buffer([0x02,this.steps[DRIVE_KEY] & 0xFF,0x02,0x00,0x03,0x00])
       );
 }
 
 function cutOff()  {
-  this.steps['fa0c'] = (this.steps['fa0c'] || 0) + 1;
+  this.steps[DRIVE_KEY] = (this.steps[DRIVE_KEY] || 0) + 1;
   this.writeTo(
-      'fa0c',
-      new Buffer([0x02,this.steps['fa0c'] & 0xFF,0x02,0x00,0x04,0x00])
+      DRIVE_KEY,
+      buffer([0x02,this.steps[DRIVE_KEY] & 0xFF,0x02,0x00,0x04,0x00])
       );
 }
 
 function flatTrim () {
-  this.steps['fa0b'] = (this.steps['fa0b'] || 0) + 1;
+  this.steps[DRIVE_KEY] = (this.steps[DRIVE_KEY] || 0) + 1;
   this.writeTo(
-      'fa0b',
-      new Buffer([0x02,this.steps['fa0b'] & 0xFF,0x02,0x00,0x00,0x00])
+      DRIVE_KEY,
+      buffer([0x02,this.steps[DRIVE_KEY] & 0xFF,0x02,0x00,0x00,0x00])
       );
 }
 
 function frontFlip() {
-  this.steps['fa0b'] = (this.steps['fa0b'] || 0) + 1;
+  this.steps[DRIVE_KEY] = (this.steps[DRIVE_KEY] || 0) + 1;
   this.writeTo(
-      'fa0b',
-      new Buffer([0x02,this.steps['fa0b'] & 0xFF,0x02,0x04,0x00,0x00,0x00,0x00,0x00,0x00])
+      DRIVE_KEY,
+      new Buffer([0x02,this.steps[DRIVE_KEY] & 0xFF,0x02,0x04,0x00,0x00,0x00,0x00,0x00,0x00])
       );
 }
 
 function backFlip() {
-  this.steps['fa0b'] = (this.steps['fa0b'] || 0) + 1;
+  this.steps[DRIVE_KEY] = (this.steps[DRIVE_KEY] || 0) + 1;
   this.writeTo(
-      'fa0b',
-      new Buffer([0x02,this.steps['fa0b'] & 0xFF,0x02,0x04,0x00,0x00,0x00,0x00,0x00,0x01])
+      DRIVE_KEY,
+      new Buffer([0x02,this.steps[DRIVE_KEY] & 0xFF,0x02,0x04,0x00,0x00,0x00,0x00,0x00,0x01])
       );
 }
 
 function rightFlip() {
-  this.steps['fa0b'] = (this.steps['fa0b'] || 0) + 1;
+  this.steps[DRIVE_KEY] = (this.steps[DRIVE_KEY] || 0) + 1;
 
   this.writeTo(
-      'fa0b',
-      new Buffer([0x02,this.steps['fa0b'] & 0xFF,0x02,0x04,0x00,0x00,0x00,0x00,0x00,0x02])
+      DRIVE_KEY,
+      new Buffer([0x02,this.steps[DRIVE_KEY] & 0xFF,0x02,0x04,0x00,0x00,0x00,0x00,0x00,0x02])
       );
 }
 
 function leftFlip() {
-  this.steps['fa0b'] = (this.steps['fa0b'] || 0) + 1;
+  this.steps[DRIVE_KEY] = (this.steps[DRIVE_KEY] || 0) + 1;
 
   this.writeTo(
-      'fa0b',
-      new Buffer([0x02,this.steps['fa0b'] & 0xFF,0x02,0x04,0x00,0x00,0x00,0x00,0x00,0x03])
+      DRIVE_KEY,
+      new Buffer([0x02,this.steps[DRIVE_KEY] & 0xFF,0x02,0x04,0x00,0x00,0x00,0x00,0x00,0x03])
       );
 }
 

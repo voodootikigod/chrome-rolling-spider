@@ -1,3 +1,5 @@
+/* global chrome */
+
 var BLE = function (options) {
   this.listeners = {};
 };
@@ -10,7 +12,7 @@ var BLE = function (options) {
 //  * discover
 //  * stateChange
 
-ble.prototype.on = function (key, handler) {
+BLE.prototype.on = function (key, handler) {
   if (!this.listeners[key])  {
     this.listeners[key] = [];
   }
@@ -18,18 +20,28 @@ ble.prototype.on = function (key, handler) {
   return;
 };
 
-ble.prototype.deviceFound = function (device) {
+BLE.prototype.decoratePeripheral = function (peripheral) {
+  return {};
+};
+
+
+
+
+BLE.prototype.deviceFound = function (device) {
   // decorate device with 'additives'
   if (this.listeners.discover) {
+    var peripheral = new BLEDevice(device);
     this.listeners.discover.forEach(function (listener) {
-      listener(device);
+      listener(peripheral);
     });
   }
 }
 
 
 
-ble.prototype.startScanning = function (callback) {
+
+
+BLE.prototype.startScanning = function (callback) {
   var that = this;
   chrome.bluetooth.onDeviceAdded.addListener(that.deviceFound);
   chrome.bluetooth.getDevices(function(devices) {
@@ -44,7 +56,7 @@ ble.prototype.startScanning = function (callback) {
   });
 };
 
-ble.prototype.stopScanning = function () {
+BLE.prototype.stopScanning = function () {
   try {
     chrome.bluetooth.stopDiscovery();
   } catch (e) {
@@ -52,12 +64,14 @@ ble.prototype.stopScanning = function () {
   }
 };
 
-ble.prototype.removeAllListeners = function () {
-
+BLE.prototype.removeAllListeners = function () {
+  for (var i in this.listeners) {
+    delete this.listeners[i];
+  } 
 };
 
 
-ble.prototype.connect = function (device, callback) {
+BLE.prototype.connect = function (device, callback) {
   var that = this;
   chrome.bluetoothLowEnergy.connect(device.address, function () {
     if (chrome.runtime.lastError) {
@@ -70,3 +84,6 @@ ble.prototype.connect = function (device, callback) {
     }
   });
 };
+
+
+var ble = new BLE();

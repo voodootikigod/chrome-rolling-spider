@@ -200,6 +200,7 @@ Drone.prototype.connectPeripheral = function(peripheral, onConnected) {
   this.uuid = peripheral.uuid;
   this.name = peripheral.advertisement.localName;
   this.peripheral = peripheral;
+  console.log('connect peripheral');
   this.peripheral.connect(onConnected);
   this.peripheral.on('disconnect', function() {
     this.onDisconnect();
@@ -216,6 +217,7 @@ Drone.prototype.connectPeripheral = function(peripheral, onConnected) {
 Drone.prototype.setup = function(callback) {
   this.logger('RollingSpider#setup');
   this.peripheral.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
+    this.logger('post-discover');
     if (error) {
       if (typeof callback === 'function') {
         callback(error);
@@ -957,8 +959,11 @@ Drone.prototype.left = tiltLeft;
 Drone.prototype.hover = hover;
 
 
-module.exports = Drone;
-
+if (typeof window !== 'undefined') {
+    window.Drone = Drone;
+} else {
+  module.exports = Drone;
+}
 }).call(this,require("buffer").Buffer)
 },{"buffer":4,"debug":3,"events":8,"lodash":2,"noble":3,"util":12}],2:[function(require,module,exports){
 (function (global){

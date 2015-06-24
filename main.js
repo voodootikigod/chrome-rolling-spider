@@ -2,7 +2,6 @@ var drone,
     searchTimer;
 
 
-
 window.onload = function() {
   chrome.bluetooth.getAdapterState(function(adapter) {
     if (!adapter.powered) {
@@ -12,7 +11,9 @@ window.onload = function() {
   log('Finding Bluetooth Devices');
 
   drone = new Drone({
-    name: "RS_W008267"
+    name: "RS_B141278",
+    logger: console.log.bind(console),
+    forceConnect: true
   });
   drone.connect(function (error) {
     if (error) {

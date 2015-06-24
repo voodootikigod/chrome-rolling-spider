@@ -6,7 +6,7 @@
 var BLECharacteristic = function (rawCharacteristic) {
   this.characteristic = rawCharacteristic;
   this.uuid = rawCharacteristic.uuid;
-}
+};
 
 BLECharacteristic.prototype.write = function (buffer, response, callback) {
   chrome.bluetoothLowEnergy.writeCharacteristicValue(this.characteristic.id, buffer, callback);
@@ -29,7 +29,7 @@ var BLEDevice = function (rawDevice) {
   this.services = undefined;
   this.state = 'disconnected';
   this.uuid = (rawDevice.uuids[0] || '').replace(/[^a-f0-9]/g, '');
-}
+};
 
 
 BLEDevice.prototype.connect = function (callback) {
@@ -64,7 +64,15 @@ BLEDevice.prototype.disconnect = function (callback) {
 };
 
 BLEDevice.prototype.discoverAllServicesAndCharacteristics = function (callback) {
+  console.log('bledevice#discoverAllServicesAndCharacteristics')
   chrome.bluetoothLowEnergy.getServices(this.address, function (services) {
+    console.log('bledevice#getServices');
+    if (chrome.runtime.lastError) {
+      console.error(chrome.runtime.lastError.message);
+      callback(chrome.runtime.lastError);
+      return;
+    }
+
     var characteristics = [];
     var end = (function (max) {
       var count = 0;
@@ -79,6 +87,7 @@ BLEDevice.prototype.discoverAllServicesAndCharacteristics = function (callback) 
           return;
         }
         count += 1;
+        console.log(''+count+'/'+max);
         for (var idx = 0, l = chrcs.length; idx < l; idx++) {
           characteristics.push(new BLECharacteristic(chrcs[idx]));
         }
@@ -89,6 +98,8 @@ BLEDevice.prototype.discoverAllServicesAndCharacteristics = function (callback) 
     })(services.length);
 
     services.forEach(function (service) {
+      
+      console.log(service.uuid);
       chrome.bluetoothLowEnergy.getCharacteristics(service.instanceId, end);
     });
   });
@@ -122,12 +133,6 @@ BLE.prototype.on = function (key, handler) {
   return;
 };
 
-BLE.prototype.decoratePeripheral = function (peripheral) {
-  return {};
-};
-
-
-
 
 BLE.prototype.deviceFound = function (device) {
   // decorate device with 'additives'
@@ -137,15 +142,16 @@ BLE.prototype.deviceFound = function (device) {
       listener(peripheral);
     });
   }
-}
+};
 
 
 BLE.prototype.startScanning = function (callback) {
   var that = this;
-  chrome.bluetooth.onDeviceAdded.addListener(that.deviceFound);
+  var found = that.deviceFound.bind(this);
+  chrome.bluetooth.onDeviceAdded.addListener(found);
   chrome.bluetooth.getDevices(function (devices) {
     for (var i = 0; i < devices.length; i++) {
-      that.deviceFound(devices[i]);
+      found(devices[i]);
     }
   });
   chrome.bluetooth.startDiscovery(function () {
@@ -172,6 +178,7 @@ BLE.prototype.removeAllListeners = function () {
 
 BLE.prototype.connect = function (device, callback) {
   var that = this;
+  console.log('sadfasdfdsafdsdsafasdfds');
   chrome.bluetoothLowEnergy.connect(device.address, function () {
     if (chrome.runtime.lastError) {
       log('Failed to connect ' + device.name + ': ' + chrome.runtime.lastError.message);

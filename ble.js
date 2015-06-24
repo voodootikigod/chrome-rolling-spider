@@ -1,5 +1,8 @@
 /* global chrome */
 
+
+
+// BLE Characteristic 
 var BLECharacteristic = function (rawCharacteristic) {
   this.characteristic = rawCharacteristic;
   this.uuid = rawCharacteristic.uuid;
@@ -11,7 +14,7 @@ BLECharacteristic.prototype.write = function (buffer, response, callback) {
 
 
 
-
+// BLE Device
 var BLEDevice = function (rawDevice) {
   this.advertisement = {
     localName: rawDevice.name,
@@ -52,7 +55,7 @@ BLEDevice.prototype.on = function (key, handler) {
 };
 
 BLEDevice.prototype.updateRssi = function (callback) {
-    callback(null);
+  callback(null);
 };
 
 
@@ -93,6 +96,15 @@ BLEDevice.prototype.discoverAllServicesAndCharacteristics = function (callback) 
 
 
 
+
+
+
+
+
+
+
+
+// BLE 
 var BLE = function (options) {
   this.listeners = {};
 };
@@ -103,7 +115,7 @@ var BLE = function (options) {
 //  * stateChange
 
 BLE.prototype.on = function (key, handler) {
-  if (!this.listeners[key])  {
+  if (!this.listeners[key]) {
     this.listeners[key] = [];
   }
   this.listeners[key].push(handler);
@@ -128,13 +140,10 @@ BLE.prototype.deviceFound = function (device) {
 }
 
 
-
-
-
 BLE.prototype.startScanning = function (callback) {
   var that = this;
   chrome.bluetooth.onDeviceAdded.addListener(that.deviceFound);
-  chrome.bluetooth.getDevices(function(devices) {
+  chrome.bluetooth.getDevices(function (devices) {
     for (var i = 0; i < devices.length; i++) {
       that.deviceFound(devices[i]);
     }
@@ -157,7 +166,7 @@ BLE.prototype.stopScanning = function () {
 BLE.prototype.removeAllListeners = function () {
   for (var i in this.listeners) {
     delete this.listeners[i];
-  } 
+  }
 };
 
 
@@ -165,7 +174,7 @@ BLE.prototype.connect = function (device, callback) {
   var that = this;
   chrome.bluetoothLowEnergy.connect(device.address, function () {
     if (chrome.runtime.lastError) {
-      log('Failed to connect '+device.name+': ' + chrome.runtime.lastError.message);
+      log('Failed to connect ' + device.name + ': ' + chrome.runtime.lastError.message);
       if (callback)
         callback(chrome.runtime.lastError);
     } else {
